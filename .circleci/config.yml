@@ -1,22 +1,9 @@
 version: 2.1
 
-defaults: &dockImage
-  docker:
-    - image: circleci/node:13.8.0
-
-commands:
-  runNpm:
-    description: "Runs npm with parameters as needed"
-    parameters: 
-      args:
-        type: string
-        default: " "
-      steps:
-        run: npm run << parameters.args >>
-
 jobs:
   build:
-    <<: *dockImage
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - run: npm i
@@ -24,20 +11,20 @@ jobs:
           key: "npm-packages"
           paths:
             - /src/node_modules
-      - runNpm:
-          args: "lint"
+      - run: npm run lint
   test:
-    <<: *dockImage
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
           keys:
             - "npm-packages"
       - run: npm i
-      - runNpm:
-          args: "test"
+      - run: npm run test
   analyze:
-    <<: *dockImage
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
